@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="wasm_exec.js"></script>
+</head>
+
+<body>
+    <h3>give me a file</h3>
+    <input type="file" id="file" name="file" accept=".png" />
+    <img id="output"></div>
+    <script>
+        function loadWASM() {
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("wasm_resize.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            })
+
+            const file = document.getElementById('file')
+            file.addEventListener('change', async (e) => {
+                const file = e.target.files[0]
+                const srcBuffer = await file.bytes()
+                let dstBuffer = new Uint8Array(srcBuffer.byteLength)
+
+                const thumbnailSize = makeThumbnail(srcBuffer, dstBuffer)
+                dstBuffer = dstBuffer.slice(0, thumbnailSize)
+
+                const blob = new Blob([dstBuffer], { type: 'image/png' })
+                const url = URL.createObjectURL(blob)
+
+                const outputEl = document.getElementById('output')
+                outputEl.src = url
+            })
+        }
+
+        loadWASM()
+    </script>
+</body>
+
+</html>
