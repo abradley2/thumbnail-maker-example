@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Thumbnail Creator</title>
     <script src="wasm_exec.js"></script>
 </head>
 
@@ -14,9 +14,9 @@
     <img id="output"></div>
     <script>
         function loadWASM() {
-            const go = new Go();
+            const go = new Go()
             WebAssembly.instantiateStreaming(fetch("wasm_resize.wasm"), go.importObject).then((result) => {
-                go.run(result.instance);
+                go.run(result.instance)
             })
 
             const file = document.getElementById('file')
